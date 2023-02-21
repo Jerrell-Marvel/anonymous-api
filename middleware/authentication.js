@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const UnauthorizedError = require("../errors/UnauthorizedError");
 const authentication = (req, res, next) => {
   const { token } = req.cookies;
+  console.log(token);
   if (!token) {
     throw new UnauthorizedError("No token provided");
   }

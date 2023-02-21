@@ -23,13 +23,21 @@ const errorHandler = require("./middleware/errorHandler");
 require("dotenv").config();
 
 (async function main() {
+  //Parse json
+  app.use(express.json());
+
+  //Cors
   app.use(
     cors({
       credentials: true,
       origin: ["http://localhost:3000", "127.0.0.1:5500", "192.168.0.182:3000"],
     })
   );
+
+  //Cookie parser
   app.use(cookieParser());
+
+  //Passport
   passport.use(
     new GoogleStrategy(
       {
@@ -38,13 +46,6 @@ require("dotenv").config();
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        // find or create a user in your database using the profile information
-        // call done with the user object
-        // const user = await User.create({
-        //   id: profile.id,
-        //   name: profile.id,
-        // })
-
         const user = await User.findOne({
           where: {
             id: profile.id,
@@ -56,17 +57,17 @@ require("dotenv").config();
             id: profile.id,
           });
 
-          const { username, id } = addedUser.dataValues;
-          const token = jwt.sign({ username, userId: id }, process.env.JWT_SECRET, {
+          const { id } = addedUser.dataValues;
+          const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_LIFETIME,
           });
 
-          done(null, { username: addedUser.dataValues.username, token });
+          done(null, { token });
         } else {
-          const token = jwt.sign({ username: user.username, userId: user.id }, process.env.JWT_SECRET, {
+          const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_LIFETIME,
           });
-          done(null, { username: user.username, token });
+          done(null, { token });
         }
 
         // console.log(user);
@@ -79,7 +80,6 @@ require("dotenv").config();
   app.get("/auth/google/callback", passport.authenticate("google", { session: false }), (req, res) => {
     // console.log(req.user);
     res.cookie("token", req.user.token, { sameSite: "none", secure: true, httpOnly: true }).redirect(`http://localhost:3000/profile`);
-    //   console.log(res);
   });
 
   app.use("/api/v1", userRoutes);
@@ -91,10 +91,11 @@ require("dotenv").config();
   //Error handling
   app.use(errorHandler);
 
+  //Start the server
   const PORT = 5000;
   app.listen(PORT, async () => {
     try {
-      await db.sync({ force: true });
+      await db.sync();
       console.log(`Server started on port ${PORT}`);
     } catch (err) {
       console.error("Unable to connect to the database : ", err);
