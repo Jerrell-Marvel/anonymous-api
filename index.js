@@ -7,6 +7,8 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const cors = require("cors");
 
+const cookieParser = require("cookie-parser");
+
 //JWT
 const jwt = require("jsonwebtoken");
 
@@ -20,8 +22,13 @@ const userRoutes = require("./routes/user");
 require("dotenv").config();
 
 (async function main() {
-  app.use(cors());
-
+  app.use(
+    cors({
+      credentials: true,
+      origin: ["http://localhost:3000", "127.0.0.1:5500", "192.168.0.182:3000"],
+    })
+  );
+  app.use(cookieParser());
   passport.use(
     new GoogleStrategy(
       {
@@ -36,6 +43,8 @@ require("dotenv").config();
         //   id: profile.id,
         //   name: profile.id,
         // })
+
+        console.log(profile.emails);
         const user = await User.findOne({
           where: {
             id: profile.id,
@@ -69,20 +78,15 @@ require("dotenv").config();
   app.get("/auth/google", passport.authenticate("google", { scope: ["profile"], session: false }));
 
   app.get("/auth/google/callback", passport.authenticate("google", { session: false }), (req, res) => {
-    console.log(req.user);
-    res.cookie("token", req.user.token, { sameSite: "none", secure: true, httpOnly: true }).redirect(`http://localhost:5000/api/v1/profile/${req.user.username}`);
+    // console.log(req.user);
+    res.cookie("token", req.user.token, { sameSite: "none", secure: true, httpOnly: true }).redirect(`http://localhost:3000/profile`);
     //   console.log(res);
   });
 
   app.use("/api/v1", userRoutes);
 
   app.get("/test", async (req, res) => {
-    const user = await User.create({
-      id: "2376128736891",
-      name: "2376128736891",
-    });
-
-    res.json({ ok: true });
+    res.cookie("testingCOOKIe", "12345", { sameSite: "none", secure: true, httpOnly: true }).redirect("http://localhost:3000");
   });
 
   const PORT = 5000;
