@@ -16,15 +16,21 @@ const jwt = require("jsonwebtoken");
 const mysql = require("mysql2/promise");
 const db = require("./db/connectDB");
 const User = require("./models/User.model");
+const Message = require("./models/Message.model");
+const Reply = require("./models/Reply.model");
 
+//routes
 const userRoutes = require("./routes/user");
+const messageRoutes = require("./routes/message");
+const replyRoutes = require("./routes/reply");
+
 const errorHandler = require("./middleware/errorHandler");
 
 require("dotenv").config();
 
 (async function main() {
   //Parse json
-  app.use(express.json());
+  app.use(express.json({ force: true }));
 
   //Cors
   app.use(
@@ -83,6 +89,8 @@ require("dotenv").config();
   });
 
   app.use("/api/v1", userRoutes);
+  app.use("/api/v1", messageRoutes);
+  app.use("/api/v1", replyRoutes);
 
   app.get("/test", async (req, res) => {
     res.cookie("testingCOOKIe", "12345", { sameSite: "none", secure: true, httpOnly: true }).redirect("http://localhost:3000");

@@ -1,6 +1,5 @@
 const db = require("../db/connectDB");
 const { DataTypes } = require("sequelize");
-const jwt = require("jsonwebtoken");
 const User = db.define(
   "User",
   {
