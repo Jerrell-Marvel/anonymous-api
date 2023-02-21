@@ -1,17 +1,20 @@
 const jwt = require("jsonwebtoken");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 const authentication = (req, res, next) => {
   const { token } = req.cookies;
-  console.log(req.cookies);
+  if (!token) {
+    throw new UnauthorizedError("No token provided");
+  }
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(payload);
+
     req.user = {
       username: payload.username,
       userId: payload.userId,
     };
     next();
   } catch (err) {
-    console.log("ERR");
+    throw new UnauthorizedError("Failed to authenticate token (token might be invalid)");
   }
 };
 

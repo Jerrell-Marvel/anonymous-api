@@ -18,6 +18,7 @@ const db = require("./db/connectDB");
 const User = require("./models/User.model");
 
 const userRoutes = require("./routes/user");
+const errorHandler = require("./middleware/errorHandler");
 
 require("dotenv").config();
 
@@ -44,7 +45,6 @@ require("dotenv").config();
         //   name: profile.id,
         // })
 
-        console.log(profile.emails);
         const user = await User.findOne({
           where: {
             id: profile.id,
@@ -54,7 +54,6 @@ require("dotenv").config();
         if (!user) {
           const addedUser = await User.create({
             id: profile.id,
-            username: profile.id,
           });
 
           const { username, id } = addedUser.dataValues;
@@ -88,6 +87,9 @@ require("dotenv").config();
   app.get("/test", async (req, res) => {
     res.cookie("testingCOOKIe", "12345", { sameSite: "none", secure: true, httpOnly: true }).redirect("http://localhost:3000");
   });
+
+  //Error handling
+  app.use(errorHandler);
 
   const PORT = 5000;
   app.listen(PORT, async () => {

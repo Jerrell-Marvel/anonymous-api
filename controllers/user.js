@@ -1,6 +1,6 @@
 const User = require("../models/User.model");
 
-const getUsers = async (req, res) => {
+const getProfile = async (req, res) => {
   // console.log("NAME IS " + username);
   // const user = await User.findOne({
   //   where: {
@@ -21,4 +21,4 @@ const getUsers = async (req, res) => {
   res.json({ user });
 };
 
-module.exports = getUsers;
+module.exports = getProfile;
