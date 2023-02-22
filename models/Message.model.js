@@ -18,7 +18,7 @@ const Message = db.define(
   }
 );
 
-User.hasMany(Message, { foreignKey: "user_id" });
+User.hasMany(Message, { foreignKey: "user_id", as: "messages" });
 Message.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = Message;

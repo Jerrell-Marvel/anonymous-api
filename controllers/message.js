@@ -1,5 +1,6 @@
 const BadRequestError = require("../errors/BadRequestError");
 const Message = require("../models/Message.model");
+const Reply = require("../models/Reply.model");
 const User = require("../models/User.model");
 
 const sendMessage = async (req, res) => {
@@ -17,13 +18,26 @@ const sendMessage = async (req, res) => {
 const getMessages = async (req, res) => {
   const { username } = req.params;
   console.log(username);
-  const user = await User.findOne({ where: { username } });
-  const messages = await Message.findAll({
-    where: {
-      user_id: user.id,
+  const user = await User.findOne({
+    where: { username },
+    attributes: ["id", "username"],
+    include: {
+      attributes: [["id", "message_id"], "message"],
+      model: Message,
+      as: "messages",
+      include: {
+        attributes: [["reply", "reply_id"], "reply"],
+        model: Reply,
+        as: "replies",
+      },
     },
   });
-  res.json({ user, messages });
+  // const messages = await Message.findAll({
+  //   where: {
+  //     user_id: user.id,
+  //   },
+  // });
+  res.json({ user });
 };
 
 module.exports = { sendMessage, getMessages };

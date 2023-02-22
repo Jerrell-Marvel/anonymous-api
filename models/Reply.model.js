@@ -19,7 +19,7 @@ const Reply = db.define(
   }
 );
 
-Message.hasMany(Reply, { foreignKey: "message_id" });
+Message.hasMany(Reply, { foreignKey: "message_id", as: "replies" });
 Reply.belongsTo(Message, { foreignKey: "message_id" });
 
 module.exports = Reply;
