@@ -5,12 +5,22 @@ const Message = require("../models/Message.model");
 const sendReply = async (req, res) => {
   const { messageId } = req.params;
   const { reply } = req.body;
-  try {
-    const replyMsg = await Reply.create({ reply: reply, message_id: messageId });
-    res.json({ success: true, reply: replyMsg });
-  } catch (err) {
-    throw new BadRequestError("Invalid user");
+  const { userId } = req.user;
+  console.log(userId);
+
+  const message = await Message.findOne({
+    where: {
+      id: messageId,
+      user_id: userId,
+    },
+  });
+
+  if (!message) {
+    throw new BadRequestError("Message is not available");
   }
+
+  const replyMsg = await Reply.create({ reply: reply, message_id: messageId });
+  res.json({ success: true, reply: replyMsg });
 };
 
 // const getRep= async (req, res) => {
