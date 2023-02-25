@@ -21,16 +21,22 @@ const getMessages = async (req, res) => {
   const user = await User.findOne({
     where: { username },
     attributes: ["id", "username"],
-    include: {
-      attributes: [["id", "message_id"], "message"],
-      model: Message,
-      as: "messages",
-      include: {
-        attributes: [["reply", "reply_id"], "reply"],
-        model: Reply,
-        as: "replies",
+    include: [
+      {
+        attributes: ["id", "message", "createdAt"],
+        model: Message,
+        as: "messages",
+        separate: true,
+        order: [["createdAt", "DESC"]],
+        include: [
+          {
+            attributes: [["id", "reply_id"], "reply"],
+            model: Reply,
+            as: "replies",
+          },
+        ],
       },
-    },
+    ],
   });
   // const messages = await Message.findAll({
   //   where: {

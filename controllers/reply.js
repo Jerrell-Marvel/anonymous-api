@@ -19,6 +19,16 @@ const sendReply = async (req, res) => {
     throw new BadRequestError("Message is not available");
   }
 
+  const recordCount = await Reply.count({
+    where: {
+      message_id: messageId,
+    },
+  });
+
+  if (recordCount >= 3) {
+    throw new BadRequestError("Cannot reply message more than 3 times");
+  }
+
   const replyMsg = await Reply.create({ reply: reply, message_id: messageId });
   res.json({ success: true, reply: replyMsg });
 };
