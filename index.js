@@ -30,7 +30,7 @@ require("dotenv").config();
 
 (async function main() {
   //Parse json
-  app.use(express.json({ force: true }));
+  app.use(express.json());
 
   //Cors
   app.use(
@@ -103,7 +103,7 @@ require("dotenv").config();
   const PORT = 5000;
   app.listen(PORT, async () => {
     try {
-      await db.sync({ alter: true });
+      await db.sync();
       console.log(`Server started on port ${PORT}`);
     } catch (err) {
       console.error("Unable to connect to the database : ", err);

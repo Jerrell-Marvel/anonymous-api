@@ -25,7 +25,7 @@ const sendReply = async (req, res) => {
     },
   });
 
-  if (recordCount >= 3) {
+  if (recordCount >= 5) {
     throw new BadRequestError("Cannot reply message more than 3 times");
   }
 

@@ -9,7 +9,14 @@ const sendMessage = async (req, res) => {
   console.log(userId);
   try {
     const msg = await Message.create({ message, user_id: userId });
-    res.json({ success: true, msg });
+
+    res.json({
+      success: true,
+      msg: {
+        replies: [],
+        ...msg.dataValues,
+      },
+    });
   } catch (err) {
     throw new BadRequestError("Invalid user");
   }

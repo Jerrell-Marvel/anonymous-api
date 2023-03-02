@@ -1,5 +1,8 @@
 const BadRequestError = require("../errors/BadRequestError");
 const User = require("../models/User.model");
+const Message = require("../models/Message.model");
+const Reply = require("../models/Reply.model");
+const Sequelize = require("sequelize");
 
 const getProfile = async (req, res) => {
   // console.log("NAME IS " + username);
@@ -12,14 +15,38 @@ const getProfile = async (req, res) => {
   // console.log(user);
 
   const { userId } = req.user;
+  const { message } = req.query;
+  let profile;
 
-  const user = await User.findOne({
-    where: {
-      id: userId,
-    },
-  });
+  if (message === "include") {
+    profile = await User.findOne({
+      where: { id: userId },
+      attributes: ["id", "username"],
+      include: [
+        {
+          attributes: ["id", "message", "createdAt"],
+          model: Message,
+          as: "messages",
+          separate: true,
+          order: [["createdAt", "DESC"]],
+          include: [
+            {
+              attributes: [["id", "reply_id"], "reply"],
+              model: Reply,
+              as: "replies",
+            },
+          ],
+        },
+      ],
+    });
+  } else {
+    profile = await User.findOne({
+      where: { id: userId },
+      attributes: ["id", "username"],
+    });
+  }
   console.log("user profile called");
-  res.json({ user });
+  res.json({ user: profile });
 };
 
 const updateProfile = async (req, res) => {
@@ -45,4 +72,19 @@ const updateProfile = async (req, res) => {
   res.json({ success: true });
 };
 
-module.exports = { getProfile, updateProfile };
+const getUsers = async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res.json({ users: [] });
+  }
+  const users = await User.findAll({
+    where: Sequelize.where(Sequelize.fn("lower", Sequelize.col("username")), {
+      [Sequelize.Op.like]: `%${q}%`,
+    }),
+  });
+
+  res.json({ users });
+};
+
+module.exports = { getProfile, updateProfile, getUsers };
