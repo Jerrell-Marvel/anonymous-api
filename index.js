@@ -88,6 +88,11 @@ require("dotenv").config();
     res.cookie("token", req.user.token, { sameSite: "none", secure: true, httpOnly: true }).redirect(`http://localhost:3000/profile`);
   });
 
+  app.use((req, res, next) => {
+    console.error(req.url);
+    next();
+  });
+
   app.use("/api/v1", userRoutes);
   app.use("/api/v1", messageRoutes);
   app.use("/api/v1", replyRoutes);
@@ -98,6 +103,27 @@ require("dotenv").config();
 
   //Error handling
   app.use(errorHandler);
+
+  app.use((err, req, res, next) => {
+    res.json({ msg: err.message });
+  });
+
+  app.get("/user/:id", (req, res, next) => {
+    // const { id } = req.params;
+
+    // if (!id) {
+    //   console.log("Erro");
+    //   return next(new Error("Id can't be empty"));
+    // }
+
+    // res.json({ id });
+    try {
+      const { id } = req.params;
+      res.json({ id });
+    } catch (error) {
+      console.log(error.message);
+    }
+  });
 
   //Start the server
   const PORT = 5000;
