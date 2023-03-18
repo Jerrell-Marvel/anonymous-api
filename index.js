@@ -104,25 +104,19 @@ require("dotenv").config();
   //Error handling
   app.use(errorHandler);
 
-  app.use((err, req, res, next) => {
-    res.json({ msg: err.message });
+  app.get("/profile/:id", (req, res, next) => {
+    const { id } = req.params;
+    if (id.length != 8) {
+      const err = new Error("Invalid id length");
+      return next(err);
+    }
+
+    res.json({ id });
   });
 
-  app.get("/user/:id", (req, res, next) => {
-    // const { id } = req.params;
-
-    // if (!id) {
-    //   console.log("Erro");
-    //   return next(new Error("Id can't be empty"));
-    // }
-
-    // res.json({ id });
-    try {
-      const { id } = req.params;
-      res.json({ id });
-    } catch (error) {
-      console.log(error.message);
-    }
+  //Error handling
+  app.use((err, req, res, next) => {
+    res.json({ errMsg: err.message });
   });
 
   //Start the server

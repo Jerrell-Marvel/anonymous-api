@@ -53,4 +53,22 @@ const getMessages = async (req, res) => {
   res.json({ user });
 };
 
-module.exports = { sendMessage, getMessages };
+const deleteMessage = async (req, res) => {
+  const { messageId } = req.params;
+  const { userId } = req.user;
+
+  const deletedCount = await Message.destroy({
+    where: {
+      id: messageId,
+      user_id: userId,
+    },
+  });
+
+  if (deletedCount !== 0) {
+    return res.json({ success: true, deletedCount });
+  }
+
+  throw new BadRequestError("Can't find message");
+};
+
+module.exports = { sendMessage, getMessages, deleteMessage };
