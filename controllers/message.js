@@ -1,4 +1,5 @@
 const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
 const Message = require("../models/Message.model");
 const Reply = require("../models/Reply.model");
 const User = require("../models/User.model");
@@ -68,7 +69,7 @@ const deleteMessage = async (req, res) => {
     return res.json({ success: true, deletedCount });
   }
 
-  throw new BadRequestError("Can't find message");
+  throw new NotFoundError("Can't find message");
 };
 
 module.exports = { sendMessage, getMessages, deleteMessage };
