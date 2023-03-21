@@ -21,7 +21,7 @@ const getProfile = async (req, res) => {
   if (message === "include") {
     profile = await User.findOne({
       where: { id: userId },
-      attributes: ["id", "username"],
+      // attributes: ["id", "username"],
       include: [
         {
           attributes: ["id", "message", "createdAt"],
@@ -42,7 +42,7 @@ const getProfile = async (req, res) => {
   } else {
     profile = await User.findOne({
       where: { id: userId },
-      attributes: ["id", "username"],
+      // attributes: ["id", "username"],
     });
   }
   console.log("user profile called");
@@ -51,14 +51,16 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const { userId } = req.user;
-  const { username } = req.body;
+  const { username, instagram, twitter } = req.body;
+
+  // console.log(instagram, twitter);
 
   if (!username) {
     throw new BadRequestError("Username can't be empty");
   }
   try {
     await User.update(
-      { username },
+      { username, instagram, twitter },
       {
         where: {
           id: userId,

@@ -12,6 +12,12 @@ const User = db.define(
       type: DataTypes.STRING,
       unique: true,
     },
+    instagram: {
+      type: DataTypes.STRING,
+    },
+    twitter: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: true,

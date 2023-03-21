@@ -28,7 +28,7 @@ const getMessages = async (req, res) => {
   console.log(username);
   const user = await User.findOne({
     where: { username },
-    attributes: ["id", "username"],
+    // attributes: ["id", "username"],
     include: [
       {
         attributes: ["id", "message", "createdAt"],
