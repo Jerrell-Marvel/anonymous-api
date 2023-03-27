@@ -123,7 +123,7 @@ require("dotenv").config();
   const PORT = 5000;
   app.listen(PORT, async () => {
     try {
-      await db.sync({ force: true });
+      await db.sync({ alter: true });
       console.log(`Server started on port ${PORT}`);
     } catch (err) {
       console.error("Unable to connect to the database : ", err);

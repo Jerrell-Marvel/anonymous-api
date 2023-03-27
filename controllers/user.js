@@ -51,7 +51,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const { userId } = req.user;
-  const { username, instagram, twitter } = req.body;
+  const { username, instagram, twitter, bio } = req.body;
 
   // console.log(instagram, twitter);
 
@@ -60,7 +60,7 @@ const updateProfile = async (req, res) => {
   }
   try {
     await User.update(
-      { username, instagram, twitter },
+      { username, instagram, twitter, bio },
       {
         where: {
           id: userId,

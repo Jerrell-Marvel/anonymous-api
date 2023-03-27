@@ -18,6 +18,9 @@ const User = db.define(
     twitter: {
       type: DataTypes.STRING,
     },
+    bio: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: true,
